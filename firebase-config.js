@@ -1,6 +1,12 @@
-// 1) Colle ici la config de TON projet Firebase (voir README, étape 3).
-// Ces valeurs ne sont pas secrètes : la sécurité vient des règles (firestore.rules / storage.rules).
-export const firebaseConfig = {
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
   apiKey: "AIzaSyDtYxmdcMYeZ5er5zLGgB2N_yypA1N1wMw",
   authDomain: "emp-lov.firebaseapp.com",
   databaseURL: "https://emp-lov-default-rtdb.firebaseio.com",
@@ -10,6 +16,7 @@ export const firebaseConfig = {
   appId: "1:210831116108:web:ea2fa85196a87fbb9531e9",
   measurementId: "G-L2H3G14FZG"
 };
-// true  = photos et PDF dans Firebase Storage (demande le plan Blaze avec carte bancaire, gratuit sous le quota)
-// false = mode gratuit : photos réduites et stockées dans la base, manuels = liens
-export const useStorage = false;
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
