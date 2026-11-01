@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signed() { return request.auth != null; }
+    function prof() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function isAdmin() { return signed() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && prof().role == 'admin'; }
+
+    match /config/{id}   { allow read: if true; allow write: if isAdmin(); }
+    match /products/{id} { allow read: if true; allow write: if isAdmin(); }
+
+    match /users/{uid} {
+      allow read: if signed() && (request.auth.uid == uid || isAdmin());
+      allow create: if isAdmin() || (signed() && request.auth.uid == uid
+                       && request.resource.data.role == 'client' && request.resource.data.actif == true);
+      allow update: if isAdmin() || (signed() && request.auth.uid == uid
+                       && request.resource.data.role == resource.data.role
+                       && request.resource.data.actif == resource.data.actif);
+      allow delete: if isAdmin();
+    }
+
+    match /devis/{id} {
+      allow create: if signed() && request.resource.data.uid == request.auth.uid
+                       && request.resource.data.statut == 'nouveau' && prof().actif == true;
+      allow read: if signed() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow update, delete: if isAdmin();
+    }
+  }
+}
